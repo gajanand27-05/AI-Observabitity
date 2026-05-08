@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(try { $r = Invoke-RestMethod -Uri \"http://127.0.0.1:8000/healthz\" -TimeoutSec 4; \"LOCAL_HEALTHZ_OK: \" + \\($r | ConvertTo-Json -Compress\\) } catch { \"LOCAL_HEALTHZ_FAIL: \" + $_.Exception.Message })",
+      "PowerShell(try { $r = Invoke-WebRequest -Uri \"http://localhost:3000\" -TimeoutSec 4 -UseBasicParsing; \"FRONTEND_OK: status=\" + $r.StatusCode } catch { \"FRONTEND_FAIL: \" + $_.Exception.Message })",
+      "Read(//c/Users/gajan/AppData/Local/Temp/claude/D--AI-Observabitity/1883b4d1-6563-4dc1-9b3d-6fb417425dd2/tasks/**)",
+      "Bash(npm run *)",
+      "PowerShell(try { $r = Invoke-WebRequest -Uri \"http://localhost:3000\" -TimeoutSec 8 -UseBasicParsing; \"FRONTEND: status=\" + $r.StatusCode } catch { \"FRONTEND_FAIL: \" + $_.Exception.Message })",
+      "Bash(\"D:/AI Observabitity/backend/.venv/Scripts/pip.exe\" show cryptography)",
+      "Bash(\"D:/AI Observabitity/backend/.venv/Scripts/pip.exe\" install \"cryptography>=43\")",
+      "Bash(./.venv/Scripts/uvicorn.exe app.main:app --host 127.0.0.1 --port 8000)"
+    ]
+  }
+}

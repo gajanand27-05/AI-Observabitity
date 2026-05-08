@@ -1,0 +1,21 @@
+# =====================================================================
+# Cloudflare Tunnel config — example file
+# Copy to `config.yml` and fill in real values, OR use the QUICK TUNNEL
+# below if you don't have your own domain yet.
+# =====================================================================
+
+# ---------- OPTION A: Named tunnel (requires domain on Cloudflare) ----------
+#
+# 1) cloudflared tunnel login
+# 2) cloudflared tunnel create ai-observability
+# 3) Note the tunnel UUID printed; put it below in `tunnel:`
+# 4) cloudflared tunnel route dns ai-observability api.<your-domain>
+# 5) cloudflared tunnel --config ./config.yml run
+#
+tunnel: <YOUR_TUNNEL_UUID>
+credentials-file: <PATH_TO_TUNNEL_CREDENTIALS_JSON>   # usually ~/.cloudflared/<UUID>.json
+
+ingress:
+  - hostname: api.your-domain.com                     # public URL the frontend will call
+    service: http://127.0.0.1:8000                    # local FastAPI
+  - service: http_status:404                          # catch-all
