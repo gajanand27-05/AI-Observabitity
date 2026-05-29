@@ -5,7 +5,7 @@ import { backendFetch } from "@/lib/backend";
 
 type Chunk = { doc_slug: string; chunk_idx: number; text: string; score: number };
 type ChatModel = { id: string; family: string; tier: string; approx_size: string };
-type ModelsResp = { chat_models: ChatModel[]; embedders: string[] };
+type ModelsResp = { chat_models: ChatModel[]; embedders: string[]; default_model: string };
 type ChatResp = {
   answer: string;
   chunks: Chunk[];
@@ -32,7 +32,8 @@ export default function ChatPage() {
         const j: ModelsResp = await r.json();
         setModels(j.chat_models);
         setEmbedders(j.embedders);
-        if (j.chat_models.length) setModel(j.chat_models[0].id);
+        if (j.default_model) setModel(j.default_model);
+        else if (j.chat_models.length) setModel(j.chat_models[0].id);
         if (j.embedders.length) setEmbedder(j.embedders[0]);
       } catch (e: unknown) {
         setError(`Failed to load models: ${e instanceof Error ? e.message : String(e)}`);

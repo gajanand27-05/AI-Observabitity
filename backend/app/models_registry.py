@@ -40,8 +40,18 @@ BAKE_OFF_MODELS: list[ModelInfo] = [
     ModelInfo("glm-5.1",              "zhipu",    "flagship", "flagship"),
 
     ModelInfo("kimi-k2-thinking",     "moonshot", "bonus",    "~1T",
-              "Reasoning model with explicit CoT — useful for studying overthinking on simple RAG queries"),
+              "Reasoning model with explicit CoT - useful for studying overthinking on simple RAG queries"),
 ]
+
+
+# Phase 1.5 LLM-as-judge.
+# Per the plan, the judge is one of the 12 candidates; its own scores are still recorded
+# but it is disqualified from quality leaderboard ordering (self-preference bias).
+JUDGE_MODEL = "gpt-oss:120b"
+
+# Phase 1.5 winner!
+DEFAULT_MODEL = "nemotron-3-super"
+JUDGE_DISQUALIFIED_FROM_LEADERBOARD = True
 
 
 TIER_ORDER: tuple[Tier, ...] = ("tiny", "mid", "large", "flagship", "bonus")
@@ -68,3 +78,4 @@ if __name__ == "__main__":
         for m in models:
             print(f"  {m.id:<28} {m.family:<10} {m.approx_size}")
     print(f"\nTotal: {len(BAKE_OFF_MODELS)} models")
+    print(f"Judge: {JUDGE_MODEL} (disqualified from leaderboard: {JUDGE_DISQUALIFIED_FROM_LEADERBOARD})")

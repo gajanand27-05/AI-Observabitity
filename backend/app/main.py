@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from .auth import require_user
 from .config import settings
+from .routes.admin_bakeoff import router as admin_bakeoff_router
 from .routes.chat import router as chat_router
 
 app = FastAPI(title="AI Observability backend", version="0.1.0")
@@ -31,3 +32,4 @@ def me(user: dict = Depends(require_user)) -> dict:
 
 
 app.include_router(chat_router)
+app.include_router(admin_bakeoff_router)

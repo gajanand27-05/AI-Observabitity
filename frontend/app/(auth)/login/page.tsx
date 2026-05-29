@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
   const params = useSearchParams();
   const [email, setEmail] = useState("");
@@ -26,8 +26,7 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="mx-auto max-w-sm px-6 py-20">
-      <h1 className="text-2xl font-semibold">Log in</h1>
+    <>
       <form onSubmit={onSubmit} className="mt-6 space-y-3">
         <input
           type="email"
@@ -58,6 +57,17 @@ export default function LoginPage() {
         <Link href="/signup" className="underline">Create an account</Link>
         <Link href="/forgot-password" className="underline">Forgot password?</Link>
       </div>
+    </>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <main className="mx-auto max-w-sm px-6 py-20">
+      <h1 className="text-2xl font-semibold">Log in</h1>
+      <Suspense fallback={<p>Loading...</p>}>
+        <LoginForm />
+      </Suspense>
     </main>
   );
 }

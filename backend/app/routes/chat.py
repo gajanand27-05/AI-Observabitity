@@ -7,7 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 
 from ..auth import require_user
-from ..models_registry import BAKE_OFF_MODELS
+from ..models_registry import BAKE_OFF_MODELS, DEFAULT_MODEL
 from ..ollama_client import cloud
 from ..rag.embed import EMBEDDERS
 from ..rag.retrieve import retrieve
@@ -52,6 +52,7 @@ def list_models(user: dict = Depends(require_user)) -> dict:
             for m in BAKE_OFF_MODELS
         ],
         "embedders": list(EMBEDDERS.keys()),
+        "default_model": DEFAULT_MODEL,
     }
 
 

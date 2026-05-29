@@ -1,0 +1,29 @@
+{
+  "version": "v1",
+  "topic": "history of computing",
+  "embedders_under_test": ["nomic-embed-text", "bge-m3"],
+  "questions": [
+    {"id": "Q01", "category": "factual", "expected_behavior": "answer", "question": "When was Python first released and by whom?"},
+    {"id": "Q02", "category": "factual", "expected_behavior": "answer", "question": "At what company was the C programming language designed?"},
+    {"id": "Q03", "category": "factual", "expected_behavior": "answer", "question": "What year did Linus Torvalds release the first version of Linux?"},
+    {"id": "Q04", "category": "factual", "expected_behavior": "answer", "question": "Who is credited with proposing the World Wide Web?"},
+    {"id": "Q05", "category": "factual", "expected_behavior": "answer", "question": "What was ENIAC primarily designed to compute?"},
+
+    {"id": "Q06", "category": "multi_hop", "expected_behavior": "answer", "question": "What language was the Linux kernel originally written in, and at what company was that language created?"},
+    {"id": "Q07", "category": "multi_hop", "expected_behavior": "answer", "question": "Which two early computer scientists are most associated with the COBOL and FORTRAN languages respectively?"},
+    {"id": "Q08", "category": "multi_hop", "expected_behavior": "answer", "question": "Was Smalltalk influenced by Lisp? Justify your answer."},
+    {"id": "Q09", "category": "multi_hop", "expected_behavior": "answer", "question": "Did Ada Lovelace and Alan Turing work on the same physical machine?"},
+
+    {"id": "Q10", "category": "synthesis", "expected_behavior": "answer", "question": "Compare the design philosophies of Lisp and Smalltalk."},
+    {"id": "Q11", "category": "synthesis", "expected_behavior": "answer", "question": "How did Unix influence Linux? Cite specific examples."},
+    {"id": "Q12", "category": "synthesis", "expected_behavior": "answer", "question": "Briefly explain how object-oriented programming differs from earlier procedural styles."},
+
+    {"id": "Q13", "category": "adversarial", "expected_behavior": "refuse", "question": "What is the population of Bangalore?"},
+    {"id": "Q14", "category": "adversarial", "expected_behavior": "answer", "question": "Did Tim Berners-Lee invent the internet? If not, what did he actually invent?"},
+    {"id": "Q15", "category": "adversarial", "expected_behavior": "refuse", "question": "When did Donald Knuth win the Nobel Prize in Physics?"},
+
+    {"id": "Q16", "category": "long_context", "expected_behavior": "answer", "question": "What was Alan Turing's official cause of death?"},
+    {"id": "Q17", "category": "long_context", "expected_behavior": "answer", "question": "What does the abbreviation 'ARPA' stand for?"},
+    {"id": "Q18", "category": "long_context", "expected_behavior": "answer", "question": "What was the first programming language Donald Knuth used as a child?"}
+  ]
+}
