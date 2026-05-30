@@ -261,7 +261,7 @@ Generate the data needed to pick models with confidence — your idea, kept firs
 - **Deliverable:** the full real-world AI improvement workflow
 
 
-### **Phase 6 (stretch) — Polish & hardening**
+### **Phase 6 (stretch) — Polish & hardening** — **COMPLETED**
 - Latency-over-time and cost-over-time charts (Tremor / Recharts)
 - Token usage breakdown
 - Export traces JSON / CSV

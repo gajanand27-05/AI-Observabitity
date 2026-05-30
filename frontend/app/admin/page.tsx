@@ -5,7 +5,7 @@ import Link from "next/link";
 import { backendFetch } from "@/lib/backend";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Activity, Database, BarChart3, AlertTriangle, Users, Clock } from "lucide-react";
+import { Activity, Database, BarChart3, AlertTriangle, Users, Clock, Download } from "lucide-react";
 import { 
   BarChart, 
   Bar, 
@@ -14,8 +14,11 @@ import {
   CartesianGrid, 
   Tooltip, 
   ResponsiveContainer,
-  Cell
+  Cell,
+  LineChart,
+  Line
 } from 'recharts';
+import { Button } from "@/components/ui/button";
 
 interface AdminStats {
   total_traces: number;
@@ -24,6 +27,7 @@ interface AdminStats {
   total_cost: number;
   model_usage: { name: string; value: number }[];
   status_counts: { name: string; value: number }[];
+  latency_history: { time: string; latency: number }[];
 }
 
 export default function AdminDashboard() {
@@ -50,6 +54,11 @@ export default function AdminDashboard() {
         let totalLatency = 0;
         let totalCost = 0;
         const uniqueUsers = new Set();
+        
+        const latencyHistory = traces.slice(0, 20).reverse().map((t: any) => ({
+          time: new Date(t.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          latency: t.total_latency_ms
+        }));
 
         traces.forEach((t: any) => {
           modelCounts[t.model_id] = (modelCounts[t.model_id] || 0) + 1;
@@ -66,6 +75,7 @@ export default function AdminDashboard() {
           total_cost: totalCost,
           model_usage: Object.entries(modelCounts).map(([name, value]) => ({ name: name.split(':')[0], value })),
           status_counts: Object.entries(statusCounts).map(([name, value]) => ({ name, value })),
+          latency_history: latencyHistory,
         });
       } catch (err) {
         console.error(err);
@@ -82,11 +92,21 @@ export default function AdminDashboard() {
     <div className="container mx-auto py-10 px-4 space-y-8">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">Admin Console</h1>
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-muted-foreground">Backend Status:</span>
-          <Badge variant={isOnline ? "default" : "destructive"}>
-            {isOnline === null ? "CHECKING..." : isOnline ? "ONLINE" : "OFFLINE"}
-          </Badge>
+        <div className="flex items-center gap-4">
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={() => window.open(`${process.env.NEXT_PUBLIC_BACKEND_URL}/traces/export/csv`, '_blank')}>
+              <Download className="h-4 w-4 mr-2" /> CSV
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => window.open(`${process.env.NEXT_PUBLIC_BACKEND_URL}/traces/export/json`, '_blank')}>
+              <Download className="h-4 w-4 mr-2" /> JSON
+            </Button>
+          </div>
+          <div className="flex items-center gap-2 border-l pl-4">
+            <span className="text-sm text-muted-foreground">Backend:</span>
+            <Badge variant={isOnline ? "default" : "destructive"}>
+              {isOnline === null ? "CHECKING..." : isOnline ? "ONLINE" : "OFFLINE"}
+            </Badge>
+          </div>
         </div>
       </div>
 
@@ -164,6 +184,31 @@ export default function AdminDashboard() {
           </CardContent>
         </Card>
 
+        {/* Latency History Chart */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Latency Trend</CardTitle>
+            <CardDescription>Latency of the last 20 requests (ms)</CardDescription>
+          </CardHeader>
+          <CardContent className="h-[300px]">
+            {stats?.latency_history.length ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={stats.latency_history}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="time" fontSize={10} />
+                  <YAxis fontSize={12} />
+                  <Tooltip />
+                  <Line type="monotone" dataKey="latency" stroke="#8884d8" strokeWidth={2} dot={{ r: 4 }} activeDot={{ r: 6 }} />
+                </LineChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="h-full flex items-center justify-center text-muted-foreground">No data available</div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Quick Links */}
         <Card>
           <CardHeader>

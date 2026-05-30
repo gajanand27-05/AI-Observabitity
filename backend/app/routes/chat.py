@@ -1,9 +1,8 @@
 """/chat and /models endpoints with Phase 2 tracing instrumentation."""
-from __future__ import annotations
 
 import time
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel, Field
 
 from ..auth import require_user
@@ -12,6 +11,7 @@ from ..ollama_client import cloud
 from ..rag.embed import EMBEDDERS
 from ..rag.retrieve import retrieve
 
+from ..limiter import limiter
 from ..prompts import get_prompt, get_latest_version
 from ..rules import default_engine
 from ..supabase_client import supabase
@@ -56,7 +56,12 @@ def list_models(user: dict = Depends(require_user)) -> dict:
 
 
 @router.post("/chat", response_model=ChatResponse)
-async def chat(req: ChatRequest, user: dict = Depends(require_user)) -> ChatResponse:
+@limiter.limit("5/minute")
+async def chat(
+    request: Request,
+    req: ChatRequest, 
+    user: dict = Depends(require_user)
+) -> ChatResponse:
     if req.embedder not in EMBEDDERS:
         raise HTTPException(status_code=400, detail=f"Unknown embedder: {req.embedder}")
 
