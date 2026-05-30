@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import { ExternalLink } from "lucide-react";
 import { backendFetch } from "@/lib/backend";
 
 type Chunk = { doc_slug: string; chunk_idx: number; text: string; score: number };
@@ -12,6 +14,7 @@ type ChatResp = {
   model: string;
   embedder: string;
   latency_ms: number;
+  trace_id: string;
 };
 
 export default function ChatPage() {
@@ -126,7 +129,15 @@ export default function ChatPage() {
       {resp && (
         <section className="space-y-4">
           <div>
-            <h2 className="font-semibold">Answer</h2>
+            <div className="flex justify-between items-center">
+              <h2 className="font-semibold">Answer</h2>
+              <Link
+                href={`/dashboard/traces/${resp.trace_id}`}
+                className="text-xs flex items-center text-primary hover:underline"
+              >
+                View Trace Details <ExternalLink className="h-3 w-3 ml-1" />
+              </Link>
+            </div>
             <p className="mt-1 text-xs text-gray-500">
               {resp.model} · {resp.embedder} · {resp.latency_ms} ms
             </p>

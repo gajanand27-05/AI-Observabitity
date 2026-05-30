@@ -42,3 +42,5 @@ backend/data/bake_off/
 # Logs
 *.log
 logs/
+
+PROJECT_OVERVIEW.md

@@ -239,11 +239,12 @@ Generate the data needed to pick models with confidence — your idea, kept firs
 - Heartbeat job: backend posts to `backend_heartbeat` every 30s
 - **Deliverable:** every chat creates a trace row in Supabase; heartbeat visible in admin
 
-### **Phase 3 — User & admin dashboards**
+### **Phase 3 — User & Admin dashboards** — **COMPLETED**
 - User dashboard: own traces, search, latency / cost summaries, feedback, RLS-enforced
 - Admin dashboard: everything, system health card (online/offline pill), cost across users, top models, abuse signals
 - Trace detail page: timeline of spans, latency breakdown, prompt + chunks + answer side-by-side
 - **Deliverable:** real visual observability, hosted on Vercel, anyone can sign up and see their traces
+
 
 ### **Phase 4 — Rules engine + Bad Answers + feedback loop**
 - Implement rules from §7
