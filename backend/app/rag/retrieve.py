@@ -31,7 +31,13 @@ def _get_client() -> chromadb.ClientAPI:
 async def retrieve(query: str, embedder: str, k: int = 5) -> list[RetrievedChunk]:
     if embedder not in EMBEDDERS:
         raise ValueError(f"Unknown embedder: {embedder}")
-    qemb = await local.embed(embedder, query)
+    
+    # Nomic specific optimization: add prefix
+    prepared_query = query
+    if embedder == "nomic-embed-text":
+        prepared_query = f"search_query: {query}"
+        
+    qemb = await local.embed(embedder, prepared_query)
     coll = _get_client().get_collection(name=EMBEDDERS[embedder])
     res = coll.query(query_embeddings=[qemb], n_results=k)
     docs = (res.get("documents") or [[]])[0]

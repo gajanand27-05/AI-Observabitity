@@ -17,8 +17,8 @@ from .ingest import ARTICLES, DOCS_DIR, slugify
 CHROMA_DIR = PROJECT_ROOT / "backend" / "data" / "chroma"
 
 EMBEDDERS: dict[str, str] = {
-    "nomic-embed-text": "wiki_nomic",
     "bge-m3":           "wiki_bge_m3",
+    "nomic-embed-text": "wiki_nomic",
 }
 
 _CONCURRENCY = 4
@@ -41,7 +41,11 @@ def _load_chunks(size: int, overlap: int) -> list[Chunk]:
 
 async def _embed_with_sem(sem: asyncio.Semaphore, embedder: str, text: str) -> list[float]:
     async with sem:
-        return await local.embed(embedder, text)
+        # Nomic specific optimization: add prefix
+        prepared_text = text
+        if embedder == "nomic-embed-text":
+            prepared_text = f"search_document: {text}"
+        return await local.embed(embedder, prepared_text)
 
 
 async def _build_one(embedder: str, chunks: list[Chunk]) -> int:
