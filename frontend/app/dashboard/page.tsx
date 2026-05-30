@@ -5,7 +5,7 @@ import Link from "next/link";
 import { backendFetch } from "@/lib/backend";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Search, Clock, Zap, Coins, ArrowRight } from "lucide-react";
+import { Search, Clock, Zap, Coins, ArrowRight, Cpu } from "lucide-react";
 
 interface Trace {
   id: string;
@@ -54,12 +54,17 @@ export default function UserDashboard() {
   };
 
   return (
-    <div className="container mx-auto py-10 px-4 space-y-8">
+    <div className="container mx-auto py-10 px-8 space-y-8 max-w-5xl">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Your Traces</h1>
+        <div className="space-y-1">
+          <h1 className="text-3xl font-bold tracking-tight">Your Traces</h1>
+          <p className="text-sm text-muted-foreground text-slate-500">
+            View and search through your previous interactions.
+          </p>
+        </div>
         <Link
           href="/chat"
-          className="bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary/90 transition-colors"
+          className="bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:opacity-90 transition-all shadow-sm text-sm font-medium"
         >
           New Chat
         </Link>
@@ -117,23 +122,25 @@ export default function UserDashboard() {
           <div className="grid gap-4">
             {filteredTraces.map((trace) => (
               <Link key={trace.id} href={`/dashboard/traces/${trace.id}`}>
-                <Card className="hover:bg-accent/50 transition-colors cursor-pointer">
+                <Card className="hover:bg-slate-50 dark:hover:bg-slate-900 transition-colors cursor-pointer border-slate-200 dark:border-slate-800 shadow-none">
                   <CardContent className="p-4 flex items-center justify-between">
-                    <div className="space-y-1 overflow-hidden">
+                    <div className="space-y-2 overflow-hidden flex-1">
                       <div className="flex items-center gap-2">
-                        <Badge variant={trace.status === "ok" ? "default" : "destructive"}>
+                        <Badge variant={trace.status === "ok" ? "default" : "destructive"} className="text-[10px] uppercase font-bold py-0">
                           {trace.status}
                         </Badge>
-                        <span className="text-xs text-muted-foreground">
+                        <span className="text-[10px] font-medium text-slate-400">
                           {new Date(trace.created_at).toLocaleString()}
                         </span>
                       </div>
-                      <p className="font-medium truncate">{trace.question}</p>
-                      <p className="text-sm text-muted-foreground truncate italic">
-                        {trace.model_id} • {trace.total_latency_ms}ms
-                      </p>
+                      <p className="font-semibold text-sm truncate">{trace.question}</p>
+                      <div className="flex items-center gap-3 text-[10px] text-slate-500 font-medium">
+                        <span className="flex items-center gap-1"><Cpu className="h-2.5 w-2.5" /> {trace.model_id.split(':')[0]}</span>
+                        <span className="flex items-center gap-1"><Clock className="h-2.5 w-2.5" /> {trace.total_latency_ms}ms</span>
+                        <span className="flex items-center gap-1"><Zap className="h-2.5 w-2.5" /> {trace.total_tokens} tokens</span>
+                      </div>
                     </div>
-                    <ArrowRight className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+                    <ArrowRight className="h-5 w-5 text-slate-300 ml-4 flex-shrink-0" />
                   </CardContent>
                 </Card>
               </Link>
