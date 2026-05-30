@@ -20,6 +20,7 @@ async def list_prompts(_: dict = Depends(require_admin)):
     return {"prompts": PROMPT_REGISTRY, "default": DEFAULT_SYSTEM_PROMPT}
 
 class ReplayRequest(BaseModel):
+    model_config = {"protected_namespaces": ()}
     trace_id: str
     custom_prompt: str = Field(default=DEFAULT_SYSTEM_PROMPT)
     model_id: Optional[str] = None

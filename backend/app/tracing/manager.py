@@ -26,7 +26,8 @@ class Span:
     def finish(self, output: Optional[dict] = None, error: Optional[str] = None):
         self.ended_at = datetime.now(timezone.utc)
         self.duration_ms = int((self.ended_at - self.started_at).total_seconds() * 1000)
-        self.output_json = output
+        if output is not None:
+            self.output_json = output
         self.error = error
 
 
