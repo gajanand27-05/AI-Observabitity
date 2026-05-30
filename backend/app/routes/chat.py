@@ -78,9 +78,10 @@ async def chat(
 
     try:
         # 1. Retrieve
-        async with trace.span("retrieve", input_json={"question": req.question, "k": req.k}):
+        async with trace.span("retrieve", input_json={"question": req.question, "k": req.k}) as span:
             try:
                 chunks = await retrieve(req.question, req.embedder, req.k)
+                span.output_json = [c.__dict__ for c in chunks]
             except Exception as e:
                 raise HTTPException(
                     status_code=500,

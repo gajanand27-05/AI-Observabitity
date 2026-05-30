@@ -34,13 +34,13 @@ async def replay_trace(body: ReplayRequest, user: dict = Depends(require_admin))
         raise HTTPException(status_code=404, detail="Trace not found")
     
     orig_trace = trace_res.data
-    spans_res = supabase.table("spans").select("*").eq("trace_id", body.trace_id).eq("kind", "retrieve").single().execute()
+    spans_res = supabase.table("spans").select("*").eq("trace_id", body.trace_id).eq("kind", "retrieve").order("ord").execute()
     
     if not spans_res.data:
         raise HTTPException(status_code=400, detail="Original trace has no retrieval data")
     
     # 2. Re-construct context from original retrieval
-    chunks = spans_res.data["output_json"]
+    chunks = spans_res.data[0]["output_json"]
     if not chunks:
         raise HTTPException(status_code=400, detail="Original trace has empty retrieval")
 
