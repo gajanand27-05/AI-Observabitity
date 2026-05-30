@@ -50,6 +50,8 @@ class Trace:
         self.prompt_tokens: int = 0
         self.completion_tokens: int = 0
         self.estimated_cost_usd: float = 0.0
+        self.prompt_version: Optional[str] = None
+        self.metadata: dict[str, Any] = {}
         self._start_time = time.perf_counter()
 
     @asynccontextmanager
@@ -88,6 +90,8 @@ class Trace:
             "completion_tokens": self.completion_tokens,
             "estimated_cost_usd": self.estimated_cost_usd,
             "status": status,
+            "prompt_version": self.prompt_version,
+            "metadata": self.metadata,
         }
         
         try:

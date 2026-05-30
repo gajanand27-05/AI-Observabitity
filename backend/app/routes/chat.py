@@ -12,18 +12,12 @@ from ..ollama_client import cloud
 from ..rag.embed import EMBEDDERS
 from ..rag.retrieve import retrieve
 
+from ..prompts import get_prompt, get_latest_version
 from ..rules import default_engine
 from ..supabase_client import supabase
 from ..tracing.manager import Trace
 
 router = APIRouter()
-
-SYSTEM_PROMPT = (
-    "You are a helpful assistant answering questions about the history of computing. "
-    "Use ONLY the context below to answer. "
-    "If the answer is not in the context, say \"I don't know based on the provided documents.\" "
-    "Be concise and cite article titles when relevant."
-)
 
 
 class ChatRequest(BaseModel):
@@ -66,12 +60,16 @@ async def chat(req: ChatRequest, user: dict = Depends(require_user)) -> ChatResp
     if req.embedder not in EMBEDDERS:
         raise HTTPException(status_code=400, detail=f"Unknown embedder: {req.embedder}")
 
+    prompt_version = get_latest_version()
+    system_prompt = get_prompt(prompt_version)
+
     trace = Trace(
         user_id=user["sub"],
         question=req.question,
         model_id=req.model,
         embedder_id=req.embedder,
     )
+    trace.prompt_version = prompt_version
 
     try:
         # 1. Retrieve
@@ -96,7 +94,7 @@ async def chat(req: ChatRequest, user: dict = Depends(require_user)) -> ChatResp
                 resp = await cloud.chat(
                     model=req.model,
                     messages=[
-                        {"role": "system", "content": SYSTEM_PROMPT},
+                        {"role": "system", "content": system_prompt},
                         {"role": "user", "content": user_msg},
                     ],
                 )

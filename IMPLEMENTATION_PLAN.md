@@ -254,11 +254,12 @@ Generate the data needed to pick models with confidence — your idea, kept firs
 - Email alert (Resend) to admin when a critical rule fires
 - **Deliverable:** automatic flagging + manual feedback loop
 
-### **Phase 5 — Debug & improve loop**
+### **Phase 5 — Debug & Improve Loop** — **COMPLETED**
 - "Replay" button on a bad trace — re-run with a tweaked prompt
 - A/B compare two prompt versions on the same query
 - Prompt version tracking
 - **Deliverable:** the full real-world AI improvement workflow
+
 
 ### **Phase 6 (stretch) — Polish & hardening**
 - Latency-over-time and cost-over-time charts (Tremor / Recharts)
