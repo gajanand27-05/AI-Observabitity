@@ -232,7 +232,7 @@ Generate the data needed to pick models with confidence — your idea, kept firs
 - Admin **bake-off dashboard**: leaderboard, quality vs speed scatter, per-question drill-down, "where models disagreed" view
 - **Deliverable:** real data → you pick which model is the default, no guessing
 
-### **Phase 2 — Tracing layer + heartbeat**
+### **Phase 2 — Tracing layer + heartbeat** — **COMPLETED**
 - Move trace storage from FastAPI memory → Supabase Postgres (schema from §5)
 - Instrument every step of the pipeline as spans
 - `/traces` and `/traces/:id` endpoints

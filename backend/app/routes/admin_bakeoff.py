@@ -53,6 +53,13 @@ async def get_feedback(_: dict = Depends(require_admin)) -> dict:
     return {"rows": _load_jsonl(FEEDBACK_FILE)}
 
 
+@router.get("/system/status")
+async def get_system_status(_: dict = Depends(require_admin)) -> dict:
+    """Get the latest heartbeats from all backend instances."""
+    res = supabase.table("backend_heartbeat").select("*").order("last_seen", desc=True).execute()
+    return {"heartbeats": res.data}
+
+
 class FeedbackIn(BaseModel):
     run_id: str = Field(min_length=1)
     stars: int = Field(ge=1, le=5)
