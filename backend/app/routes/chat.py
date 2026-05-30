@@ -12,6 +12,8 @@ from ..ollama_client import cloud
 from ..rag.embed import EMBEDDERS
 from ..rag.retrieve import retrieve
 
+from ..rules import default_engine
+from ..supabase_client import supabase
 from ..tracing.manager import Trace
 
 router = APIRouter()
@@ -117,6 +119,19 @@ async def chat(req: ChatRequest, user: dict = Depends(require_user)) -> ChatResp
         
         # Flush trace to Supabase
         await trace.flush()
+
+        # Phase 4: Rules Engine
+        rules_context = {"chunks": chunks}
+        trace_dict = {
+            "total_latency_ms": int((time.perf_counter() - trace._start_time) * 1000),
+            "final_answer": answer,
+        }
+        violations = await default_engine.run_all(trace_dict, rules_context)
+        if violations:
+            await default_engine.save_violations(trace.id, violations)
+            # Auto-flag if any high/critical violation
+            if any(v.severity in ("high", "critical") for v in violations):
+                supabase.table("traces").update({"status": "flagged"}).eq("id", trace.id).execute()
 
         return ChatResponse(
             answer=answer,

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { backendFetch } from "@/lib/backend";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ChevronLeft, Clock, Zap, Database, MessageSquare } from "lucide-react";
+import { ChevronLeft, Clock, Zap, Database, MessageSquare, AlertTriangle } from "lucide-react";
 
 interface Span {
   id: string;
@@ -17,6 +17,12 @@ interface Span {
   input_json: any;
   output_json: any;
   error: string | null;
+}
+
+interface Violation {
+  rule_name: string;
+  severity: string;
+  details: any;
 }
 
 interface TraceData {
@@ -32,6 +38,7 @@ interface TraceData {
     completion_tokens: number;
     estimated_cost_usd: number;
     status: string;
+    rule_violations?: Violation[];
   };
   spans: Span[];
 }
@@ -114,11 +121,37 @@ export default function TraceDetailPage({ params }: { params: Promise<{ id: stri
 
       {/* Answer */}
       <Card>
-        <CardHeader>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0">
           <CardTitle className="text-lg">Final Answer</CardTitle>
+          {trace.rule_violations && trace.rule_violations.length > 0 && (
+            <Badge variant="destructive">
+              {trace.rule_violations.length} Rule Violations
+            </Badge>
+          )}
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
           <p className="whitespace-pre-wrap leading-relaxed">{trace.final_answer}</p>
+          
+          {trace.rule_violations && trace.rule_violations.length > 0 && (
+            <div className="mt-4 p-4 border border-destructive/20 bg-destructive/5 rounded-lg space-y-3">
+              <h4 className="text-sm font-bold text-destructive flex items-center">
+                <AlertTriangle className="h-4 w-4 mr-2" /> Rule Violations
+              </h4>
+              <div className="space-y-2">
+                {trace.rule_violations.map((v, i) => (
+                  <div key={i} className="text-sm border-b border-destructive/10 pb-2 last:border-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="font-mono font-bold uppercase text-[10px]">{v.rule_name}</span>
+                      <Badge variant={v.severity === 'critical' ? 'destructive' : 'secondary'} className="text-[10px] h-4">
+                        {v.severity}
+                      </Badge>
+                    </div>
+                    <p className="text-xs text-muted-foreground">{v.details?.message}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
 

@@ -8,7 +8,9 @@ from .auth import require_user
 from .config import settings
 from .heartbeat import heartbeat_loop
 from .routes.admin_bakeoff import router as admin_bakeoff_router
+from .routes.admin_observability import router as admin_observability_router
 from .routes.chat import router as chat_router
+from .routes.feedback import router as feedback_router
 from .routes.traces import router as traces_router
 
 
@@ -56,4 +58,6 @@ def me(user: dict = Depends(require_user)) -> dict:
 
 app.include_router(chat_router)
 app.include_router(admin_bakeoff_router)
+app.include_router(admin_observability_router)
 app.include_router(traces_router)
+app.include_router(feedback_router)

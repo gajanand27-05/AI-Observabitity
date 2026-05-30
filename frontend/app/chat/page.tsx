@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, ThumbsUp, ThumbsDown } from "lucide-react";
 import { backendFetch } from "@/lib/backend";
 
 type Chunk = { doc_slug: string; chunk_idx: number; text: string; score: number };
@@ -26,6 +26,20 @@ export default function ChatPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [resp, setResp] = useState<ChatResp | null>(null);
+  const [feedbackSent, setFeedbackSent] = useState(false);
+
+  async function sendFeedback(thumbs: number) {
+    if (!resp) return;
+    try {
+      await backendFetch("/feedback", {
+        method: "POST",
+        body: JSON.stringify({ trace_id: resp.trace_id, thumbs }),
+      });
+      setFeedbackSent(true);
+    } catch (e) {
+      console.error("Failed to send feedback", e);
+    }
+  }
 
   useEffect(() => {
     (async () => {
@@ -49,6 +63,7 @@ export default function ChatPage() {
     setLoading(true);
     setError(null);
     setResp(null);
+    setFeedbackSent(false);
     try {
       const r = await backendFetch("/chat", {
         method: "POST",
@@ -143,6 +158,30 @@ export default function ChatPage() {
             </p>
             <div className="mt-2 whitespace-pre-wrap rounded bg-gray-50 dark:bg-gray-900 p-4">
               {resp.answer}
+            </div>
+            
+            <div className="mt-3 flex items-center gap-4">
+              <span className="text-xs text-gray-500">Was this helpful?</span>
+              {feedbackSent ? (
+                <span className="text-xs font-medium text-green-600">Thanks for your feedback!</span>
+              ) : (
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => sendFeedback(1)}
+                    className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
+                    title="Helpful"
+                  >
+                    <ThumbsUp className="h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={() => sendFeedback(-1)}
+                    className="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
+                    title="Not helpful"
+                  >
+                    <ThumbsDown className="h-4 w-4" />
+                  </button>
+                </div>
+              )}
             </div>
           </div>
           <details className="rounded border border-gray-200 dark:border-gray-800 p-3">

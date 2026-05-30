@@ -171,6 +171,15 @@ export default function AdminDashboard() {
             <CardDescription>Direct access to administrative tools</CardDescription>
           </CardHeader>
           <CardContent className="grid gap-4">
+            <Link href="/admin/bad-answers">
+              <div className="flex items-center p-3 rounded-lg border hover:bg-accent transition-colors">
+                <AlertTriangle className="h-5 w-5 mr-3 text-destructive" />
+                <div>
+                  <div className="font-semibold">Bad Answers</div>
+                  <div className="text-xs text-muted-foreground">Review flagged traces and rule violations</div>
+                </div>
+              </div>
+            </Link>
             <Link href="/admin/bakeoff">
               <div className="flex items-center p-3 rounded-lg border hover:bg-accent transition-colors">
                 <BarChart3 className="h-5 w-5 mr-3 text-primary" />
